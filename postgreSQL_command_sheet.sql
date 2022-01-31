@@ -1,3 +1,7 @@
+createdb -h localhost -- createdb -h <db_name>
+psql -h localhost  -- psql -h <db_name>
+
+
 -- Creating DB and Connecting
 --
 DROP DATABASE IF EXISTS file_name;
