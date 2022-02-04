@@ -15,7 +15,48 @@ CREATE TABLE table_name (
     date_of_birth TIMESTAMP,
     instrument varchar(100)
 );
+
+CREATE TABLE country (
+    id serial PRIMARY KEY,
+    -- sets id to Primary Key
+    name VARCHAR(100),
+    population INTEGER,
+    last_status_change DATE
+);
+CREATE TABLE city (
+    id serial PRIMARY KEY,
+    name VARCHAR(40),
+    area FLOAT(8),
+    is_capital BOOLEAN,
+    country_id integer REFERENCES country(id)
+    ON DELETE SET NULL
+);
+
 --
+
+\d country
+-- to view the table just created
+
+-- adding column
+ALTER TABLE country 
+ADD COLUMN code VARCHAR(4);
+
+
+-- Creating data for rows
+INSERT INTO country(name, population, last_status_change, code) VALUES
+  ('Germany', 83190556, '1990-10-03', 'DE'),
+  ('France', 67413000, '1958-10-04', 'FR'),
+  ('Namibia', 2550226, '1990-03-21', 'NA'),
+  ('Uruguay', 3518552, '1830-07-18', 'UY'),
+  ('Kazakhstan', 18711560, '1995-08-30', 'KZ'),
+  ('Spain', 47450795, '1986-01-01', 'ES'),
+  ('Switzerland', 8570146, '1848-09-12', 'CH'),
+  ('Austria', 8935112, '1995-01-01', 'AT')
+;
+
+-- selecting mupltiple tables and combining and querying for equal
+SELECT city.*, country.* from country, city WHERE country.id = city.country_id;
+
 
 CREATE DATABASE vehicles;
 
