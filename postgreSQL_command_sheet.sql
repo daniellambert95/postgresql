@@ -1,6 +1,11 @@
+-- Command + F to open the search
+-- Then search this file for what you want to do with SQL
+
+-- opening postgresql and getting started
+
 createdb -h localhost -- createdb -h <db_name>
 psql -h localhost  -- psql -h <db_name>
-
+-- the line above is used to get sql running on the terminal
 
 -- Execute a sql file with \i
 \i directory/filename.sql
