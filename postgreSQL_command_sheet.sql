@@ -2,6 +2,9 @@ createdb -h localhost -- createdb -h <db_name>
 psql -h localhost  -- psql -h <db_name>
 
 
+-- Execute a sql file with \i
+\i directory/filename.sql
+
 -- Creating DB and Connecting
 --
 DROP DATABASE IF EXISTS file_name;
@@ -187,3 +190,60 @@ WHERE instrument IN ('Guitar', 'Saxophone', 'Cello', 'Violin', 'Harp');
 
 -- Delete all rows from a table
 TRUNCATE table_name;
+
+
+-- Adding unique columns values
+ALTER TABLE country
+ADD COLUMN code VARCHAR(4) UNIQUE;
+
+-- Dropping multiple columns
+ALTER TABLE country
+DROP COLUMN code,
+DROP COLUMN name;
+
+-- Setting date styles to match original dataset
+SET datestyle TO "ISO, YMD";
+
+-- Setting multiple primary keys
+CREATE TABLE city ( 
+    name varchar(30),  
+    region varchar(30),
+    country varchar(30),
+    PRIMARY KEY(name, region, country)
+    );
+
+-- Setting two primary keys and referencing other tables
+CREATE TABLE locale (
+  name varchar(100),
+  language_code char(2) REFERENCES language,
+  country_code char(2) REFERENCES country(code),
+  PRIMARY KEY(language_code, country_code)
+);
+
+-- Creating views / how to create a view
+
+CREATE VIEW long_movies AS
+SELECT * FROM movies
+WHERE runtime > 150
+ORDER BY runtime DESC;
+
+SELECT * FROM long_movies;
+
+
+CREATE VIEW short_trailers AS
+SELECT * FROM trailers
+WHERE length <= 2;
+
+SELECT * FROM short_trailers;
+
+-- Materialized view / create a materialised view
+
+DROP VIEW IF EXISTS top_rated_long_movies CASCADE;
+
+CREATE MATERIALIZED VIEW top_rated_long_movies AS
+SELECT * FROM long_movies
+WHERE rating > 4;
+
+-- To refresh the stored values of the view
+
+REFRESH MATERIALIZED VIEW top_rated_long_movies;
