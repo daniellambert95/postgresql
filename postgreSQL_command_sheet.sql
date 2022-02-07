@@ -252,3 +252,96 @@ WHERE rating > 4;
 -- To refresh the stored values of the view
 
 REFRESH MATERIALIZED VIEW top_rated_long_movies;
+
+-- WORKING WITH JOINS
+
+SELECT city.name, country.name
+FROM city
+Join country on country.id = city.country_id;
+
+-- inner join
+-- joining two tables, 4 columns with inner join
+-- only joining rows where mentor_id = mentor.id
+SELECT student.name AS Student, mentor.name AS Mentor, 
+student.city AS students_city, mentor.city AS mentors_city
+FROM student
+INNER JOIN mentor
+ON mentor_id = mentor.id
+ORDER BY student ASC;
+
+SELECT student.name AS "Student", student.city as "City",
+mentor.name AS "Mentor"
+FROM student
+INNER JOIN mentor
+ON student.city = mentor.city
+ORDER BY student.city, student.name; 
+
+-- inner join with where clause
+SELECT mentor.name AS "Mentor", student.name AS "Student",
+mentor.city AS "Mentor's city", student.city AS "Student's city"
+FROM student 
+INNER JOIN mentor
+ON student.mentor_id = mentor.id
+WHERE student.city = 'Berlin' OR mentor.city = 'Berlin'
+ORDER BY mentor.name;
+
+-- left join
+-- same as the sql above execept it will add
+-- values of left table (student) that don't match the 
+-- on condition
+SELECT student.name AS Student, mentor.name AS Mentor, 
+student.city AS students_city, mentor.city AS mentors_city
+FROM student
+LEFT JOIN mentor
+ON mentor_id = mentor.id
+ORDER BY student ASC;
+
+-- right join
+-- joining two tables, also including mentor.name
+-- even when student = Null
+
+SELECT mentor.name AS Mentor, student.name AS Student,
+mentor.city AS mentors_city, student.city AS students_city
+FROM student
+Right JOIN mentor
+ON mentor_id = mentor.id
+ORDER BY mentor ASC;
+
+
+-- UPDATE statement to set the local_mentor field 
+-- of each student to the id of any mentor 
+-- who lives in the same city as the student.
+UPDATE student 
+SET local_mentor = mentor.id 
+FROM mentor 
+WHERE student.city = mentor.city;
+
+
+-- Joining data from 3 (multiple) tables and colummns with join
+SELECT
+student.name AS "Student", 
+module.name AS "Topic",
+mentor.name AS "Mentor"
+FROM student
+LEFT JOIN mentor ON student.mentor_id = mentor.id
+LEFT JOIN module ON module.teacher = mentor.id
+ORDER BY student.name, module.name;
+
+SELECT
+module.name AS "Topic",
+mentor.name AS "Mentor",
+student.name AS "Student" 
+FROM module
+LEFT JOIN mentor ON mentor.id = module.teacher
+LEFT JOIN student ON student.mentor_id = module.teacher
+ORDER BY module.name, student.name;
+
+SELECT
+module.name AS "Topic",
+mentor.name AS "Mentor",
+student.name AS "Student" 
+FROM student
+RIGHT JOIN mentor ON student.mentor_id = mentor.id
+RIGHT JOIN module ON module.teacher = mentor.id
+WHERE student.city = 'Berlin' OR mentor.city = 'Berlin'
+ORDER BY module.name, student.name;
