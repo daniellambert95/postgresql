@@ -24,7 +24,7 @@ CREATE TABLE "site_user" (
   active_for interval day
 );
 
--- inserting insert into  values for the table with advanced data types and arrays
+-- inserting insert into setting  values for the table with advanced data types and arrays
 INSERT INTO site_user(name, uuid, role, birthdate, siblings, availability, site_settings, created_on) VALUES
 ('Miriam Valira', 
 'e41e1291-33b8-4316-8a86-28a618d5c338', 
@@ -80,3 +80,67 @@ where site_settings @> '{"notifications": "on"}';
 -- Using the array functions from sql to find users that have more than 1 available time slot
 SELECT name FROM "site_user" 
 WHERE array_length(availability, 1) > 1;
+
+-- Contains a certain array or value
+-- @>
+SELECT
+    country_code,
+    colors
+FROM loc_country
+WHERE colors @> '{"black"}';
+
+-- How to find data by searching for a value in a column
+SELECT
+    country_code,
+    colors
+FROM loc_country
+WHERE 'red' = ANY (colors);
+
+-- selecting a range of data items
+-- [starting index:ending index]
+SELECT
+    country_code,
+    colors[1:3]
+FROM loc_country;
+
+-- Alter update a table column specific row add value to array
+UPDATE site_user
+SET siblings = array_append(siblings,'Jordi')
+WHERE name = 'Louise Clark';
+
+-- Replacing an array / replace array
+UPDATE site_user
+SET availability = ARRAY[[time '09:00', time '10:00']]
+WHERE name = 'Louise Clark';
+
+-- Set update an json array
+UPDATE site_user
+SET site_settings = jsonb_set(
+    site_settings,
+    '{notifications}', '"off"'
+)
+WHERE name = 'Louise Clark';
+
+-- searching search for people who have a role roletype lower than 'Moderator'
+SELECT * from site_user
+WHERE role < 'Moderator';
+
+-- udpate enum update column
+UPDATE site_user
+SET role = 'Moderator'
+WHERE name = 'Johann Müller';
+
+-- query jsonb json 
+-- finding rows where jsonb does not exist
+-- jsonb query to find data that doesn't have a certain key
+SELECT * FROM site_user
+WHERE NOT site_settings?'background';
+
+-- subquery
+-- selecting all from table that is not in subquery
+-- subquery = item_id from table_2 WHERE xyz
+SELECT * from item
+WHERE id NOT IN (
+    SELECT item_id FROM stock
+    WHERE quantity > 0
+) ORDER BY name;
